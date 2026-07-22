@@ -2,281 +2,542 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drumahoe Junior Forum - Bakehouse Till</title>
-    <!-- Simple, clean font and basic mobile-friendly styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bakehouse & Juice Bar Till</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f7f3e8; color: #333; display: flex; flex-direction: column; align-items: center; }
-        .till-container { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 600px; text-align: center; }
-        
-        /* The header styled to match the theme (see image_0.png) */
-        h1 { color: #eb5e8d; margin-top: 0; } /* BAKEHOUSE PINK */
-        h2 { color: #1fb981; margin-bottom: 25px; } /* JUICE BAR GREEN */
-        h3.section-title { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; text-align: left; }
-        
-        .item-list { text-align: left; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; border-bottom: 1px solid #eee; }
-        
-        .item-info { flex: 1; }
-        .price { color: #666; margin-left: 10px; font-weight: bold;}
-        
-        .item-actions { display: flex; align-items: center; gap: 10px; }
-        
-        button.qty-btn { background-color: #eee; border: 1px solid #ccc; border-radius: 5px; color: #333; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;}
-        button.qty-btn:hover { background-color: #ddd; }
-        span.item-qty { font-size: 1.2rem; font-weight: bold; width: 30px; text-align: center; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            background-color: #f4f6f8; 
+            color: #333; 
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        .total-section { margin-top: 30px; padding: 20px; border-top: 2px solid #333; font-size: 1.8rem; background-color: #eee; border-radius: 10px;}
-        .total-label { color: #1fb981; font-weight: bold;}
-        
-        #clear-btn { background-color: #ff4d4d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
-        #clear-btn:hover { background-color: #d13030; }
+        .pos-container { 
+            display: grid; 
+            grid-template-columns: 1fr 380px; 
+            gap: 15px; 
+            height: calc(100vh - 30px); 
+        }
 
-        /* Themed buttons */
-        .color-block-btn { border: none; color: white; font-weight: bold; cursor: pointer; text-align: center; border-radius: 10px; flex: 1; margin: 5px; padding: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 80px;}
-        .bake-btn { background-color: #ed6c7a; } /* Homemade Cakes Color Block */
-        .juice-btn { background-color: #ffea70; color: #333 !important; } /* Refreshing Fruit Fizzes Color Block */
-        .teddy-btn { background-color: #7d96ff; } /* Guess The Name Color Block */
+        .menu-section { overflow-y: auto; padding-right: 5px; }
+
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        .header-info { display: flex; align-items: center; gap: 12px; }
+        .header-bar img { height: 45px; width: 45px; border-radius: 50%; object-fit: cover; }
+        .header-bar h1 { margin: 0; font-size: 1.2rem; color: #eb5e8d; text-transform: uppercase; }
+        .header-bar h2 { margin: 0; font-size: 0.9rem; color: #1fb981; text-transform: uppercase; }
+
+        .btn-report-trigger {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .category-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 12px 0 8px 0;
+            padding-left: 5px;
+            border-left: 4px solid #eb5e8d;
+        }
+        .category-title.juice { border-color: #1fb981; }
+        .category-title.extra { border-color: #7d96ff; }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .item-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #eef0f2;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .item-card:active { transform: scale(0.97); border-color: #1fb981; }
+        .item-image { height: 75px; width: 100%; object-fit: cover; background-color: #eee; }
+        .item-details { padding: 6px; text-align: center; }
+        .item-name { font-size: 0.8rem; font-weight: 600; color: #333; margin-bottom: 2px; }
+        .item-price { font-size: 0.85rem; font-weight: bold; color: #1fb981; }
+
+        .deal-card {
+            background: linear-gradient(135deg, #ffea70 0%, #ffd000 100%);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            grid-column: 1 / -1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        /* RIGHT SIDE: CART & CASH REGISTER */
+        .cart-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .cart-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; border-bottom: 2px solid #eee; padding-bottom: 6px; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin-bottom: 8px; }
+
+        .cart-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .cart-controls { display: flex; align-items: center; gap: 6px; }
+        .qty-btn { background: #eef0f2; border: none; width: 26px; height: 26px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        .total-box {
+            background: #222;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .total-amount { font-size: 1.6rem; font-weight: bold; color: #1fb981; }
+
+        /* CASH & CHANGE SECTION */
+        .payment-box {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
         
-        .button-group { display: flex; width: 100%; justify-content: space-between; margin-bottom: 15px;}
-        
-        /* Basic mobile responsiveness */
-        @media (max-width: 600px) {
-            .till-container { padding: 15px; }
-            .button-group { flex-direction: column; }
-            .color-block-btn { margin: 5px 0; }
+        .quick-cash-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .btn-cash {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            padding: 6px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .btn-cash:active { background: #e2e8f0; }
+
+        .change-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            padding-top: 4px;
+        }
+        .change-amount { color: #eb5e8d; font-size: 1.2rem; }
+
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-complete {
+            background: #1fb981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            flex: 2;
+        }
+        .btn-clear {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* MODAL FOR REPORT */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Responsive view for phones/portrait */
+        @media (max-width: 768px) {
+            body { overflow: auto; }
+            .pos-container { grid-template-columns: 1fr; height: auto; }
+            .cart-section { height: 450px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="till-container">
-        <!-- Logo and Title Area -->
-        <div style="display:flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <img src="https://via.placeholder.com/60" alt="JF Logo" style="border-radius: 50%;">
-            <div>
-                <h1>BAKEHOUSE</h1>
-                <h2>&amp; JUICE BAR</h2>
+    <div class="pos-container">
+        <!-- LEFT: Items Menu -->
+        <div class="menu-section">
+            <div class="header-bar">
+                <div class="header-info">
+                    <!-- Logo file linked to logo.png -->
+                    <img src="logo.png" onerror="this.src='https://via.placeholder.com/45?text=JF'" alt="Junior Forum Logo">
+                    <div>
+                        <h1>Bakehouse</h1>
+                        <h2>&amp; Juice Bar</h2>
+                    </div>
+                </div>
+                <button class="btn-report-trigger" onclick="openReport()">📊 End Shift Summary</button>
             </div>
+
+            <!-- Quick Meal Deal -->
+            <div class="deal-card" onclick="addDeal('Meal Deal (Bake + Drink + Teddy)', 3.50)">
+                ⭐ Meal Deal: Bake + Drink + Teddy Entry (£3.50)
+            </div>
+
+            <div class="category-title">Bakes &amp; Treats</div>
+            <div class="item-grid" id="grid-bakes"></div>
+
+            <div class="category-title juice">Juice Bar Drinks</div>
+            <div class="item-grid" id="grid-drinks"></div>
+
+            <div class="category-title extra">Extras</div>
+            <div class="item-grid" id="grid-extras"></div>
         </div>
 
-        <!-- Quick Access Buttons -->
-        <p>Quick Add (e.g., specific deals):</p>
-        <div class="button-group">
-            <button class="color-block-btn bake-btn" onclick="quickAddItem('Meal Deal: Bake + Drink + Teddy', 3.50)">⭐ Meal Deal (B+D+T) - £3.50</button>
-        </div>
+        <!-- RIGHT: Till Cart & Payment -->
+        <div class="cart-section">
+            <div class="cart-title">Current Order</div>
+            <div class="cart-items" id="cart-list">
+                <p style="color: #999; text-align: center; margin-top: 30px;">Tap items to start order</p>
+            </div>
 
-        <!-- Order Summary Section (The running total) -->
-        <h3 class="section-title">Current Order:</h3>
-        <div class="item-list" id="order-list">
-            <!-- Items are added here by JavaScript -->
-        </div>
+            <div class="total-box">
+                <span>TOTAL DUE</span>
+                <span class="total-amount" id="total-display">£0.00</span>
+            </div>
 
-        <div class="total-section">
-            <span class="total-label">ORDER TOTAL:</span> <span id="total-price">£0.00</span>
-        </div>
-        
-        <button id="clear-btn" onclick="clearTill()">CLEAR ORDER</button>
+            <!-- Payment & Change Calculator -->
+            <div class="payment-box">
+                <div style="font-size: 0.75rem; color: #666; margin-bottom: 5px;">CASH TENDERED</div>
+                <div class="quick-cash-grid">
+                    <button class="btn-cash" onclick="setCashPaid('exact')">Exact</button>
+                    <button class="btn-cash" onclick="setCashPaid(5)">£5</button>
+                    <button class="btn-cash" onclick="setCashPaid(10)">£10</button>
+                    <button class="btn-cash" onclick="setCashPaid(20)">£20</button>
+                </div>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <span style="font-size: 0.85rem; font-weight: bold;">£</span>
+                    <input type="number" id="cash-input" step="0.01" placeholder="0.00" style="width: 100%; padding: 6px; border-radius: 5px; border: 1px solid #ccc;" oninput="calculateChange()">
+                </div>
+                <div class="change-row">
+                    <span>CHANGE DUE:</span>
+                    <span class="change-amount" id="change-display">£0.00</span>
+                </div>
+            </div>
 
-        <!-- The 'Menu' section, where prices are managed -->
-        <h3 class="section-title">Add Items:</h3>
-        
-        <div class="button-group">
-            <div class="color-block-btn bake-btn" style="cursor: default; pointer-events: none; padding: 10px;">
-                Cakes, Traybakes & Treats
+            <div class="action-buttons">
+                <button class="btn-clear" onclick="clearCart()">Cancel</button>
+                <button class="btn-complete" onclick="submitSale()">Pay &amp; Complete</button>
             </div>
         </div>
-        <div class="item-list">
-            <div class="item-row">
-                <div class="item-info"><span>Simple Treat (e.g., cookie)</span><span class="price">£0.50</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Simple Treat (e.g., cookie)', -1)">-</button>
-                    <span class="item-qty" id="qty-Cookie">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Simple Treat (e.g., cookie)', 1)">+</button>
-                </div>
-            </div>
-            <div class="item-row">
-                <div class="item-info"><span>Standard Bake (e.g., brownie)</span><span class="price">£1.00</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Standard Bake (e.g., brownie)', -1)">-</button>
-                    <span class="item-qty" id="qty-Brownie">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Standard Bake (e.g., brownie)', 1)">+</button>
-                </div>
-            </div>
-            <div class="item-row">
-                <div class="item-info"><span>Premium Bake (e.g., decorated cake)</span><span class="price">£2.00</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Premium Bake (e.g., decorated cake)', -1)">-</button>
-                    <span class="item-qty" id="qty-PremCake">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Premium Bake (e.g., decorated cake)', 1)">+</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="button-group">
-            <div class="color-block-btn juice-btn" style="cursor: default; pointer-events: none; padding: 10px;">
-                Drinks (3 types)
-            </div>
-        </div>
-        <div class="item-list">
-            <div class="item-row">
-                <div class="item-info"><span>Drink 1 (e.g., lemonade)</span><span class="price">£1.50</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Drink 1 (e.g., lemonade)', -1)">-</button>
-                    <span class="item-qty" id="qty-Lemonade">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Drink 1 (e.g., lemonade)', 1)">+</button>
-                </div>
-            </div>
-             <div class="item-row">
-                <div class="item-info"><span>Drink 2 (e.g., fruit fizz)</span><span class="price">£1.50</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Drink 2 (e.g., fruit fizz)', -1)">-</button>
-                    <span class="item-qty" id="qty-FruitFizz">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Drink 2 (e.g., fruit fizz)', 1)">+</button>
-                </div>
-            </div>
-             <div class="item-row">
-                <div class="item-info"><span>Special Drink</span><span class="price">£2.00</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Special Drink', -1)">-</button>
-                    <span class="item-qty" id="qty-SpecialDrink">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Special Drink', 1)">+</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="button-group">
-            <div class="color-block-btn teddy-btn" style="cursor: default; pointer-events: none; padding: 10px;">
-                Extras
-            </div>
-        </div>
-        <div class="item-list">
-            <div class="item-row">
-                <div class="item-info"><span>Guess the Teddy Name (1 Entry)</span><span class="price">£0.50</span></div>
-                <div class="item-actions">
-                    <button class="qty-btn" onclick="adjustItemQty('Guess the Teddy Name (1 Entry)', -1)">-</button>
-                    <span class="item-qty" id="qty-TeddyEntry">0</span>
-                    <button class="qty-btn" onclick="adjustItemQty('Guess the Teddy Name (1 Entry)', 1)">+</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Simple, legal note on pricing -->
-        <p style="font-size: 0.8rem; color: #999; margin-top: 30px;">All money raised is for the Junior Forum. Check poster [image_0.png] for dates.</p>
     </div>
 
-    <!-- The JavaScript Calculator Logic -->
+    <!-- REPORT MODAL -->
+    <div class="modal-overlay" id="report-modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0; color:#eb5e8d;">End of Shift Sales Report</h2>
+            <div id="report-details"></div>
+            <br>
+            <button class="btn-cash" style="width:100%; padding:10px; background:#1fb981; color:white;" onclick="downloadReport()">Download Text Summary</button>
+            <br><br>
+            <button class="btn-cash" style="width:100%; padding:8px;" onclick="closeReport()">Close</button>
+        </div>
+    </div>
+
     <script>
-        // --- 1. SET YOUR PRICES HERE ---
-        // (Just change the numbers below when you have confirmed prices)
-        const prices = {
-            'Simple Treat (e.g., cookie)': 0.50,
-            'Standard Bake (e.g., brownie)': 1.00,
-            'Premium Bake (e.g., decorated cake)': 2.00,
-            'Drink 1 (e.g., lemonade)': 1.50,
-            'Drink 2 (e.g., fruit fizz)': 1.50,
-            'Special Drink': 2.00,
-            'Guess the Teddy Name (1 Entry)': 0.50
-        };
+        // CONFIGURATION: Customize items, prices, estimated costs, and image filenames here
+        const products = [
+            // BAKES
+            { id: 1, category: 'bakes', name: 'Cheap Treat', price: 0.50, cost: 0.00, img: 'cookie.jpg' },
+            { id: 2, category: 'bakes', name: 'Medium Bake', price: 1.00, cost: 0.00, img: 'brownie.jpg' },
+            { id: 3, category: 'bakes', name: 'High Bake', price: 1.50, cost: 0.00, img: 'cake.jpg' },
 
-        // --- 2. THE ORDER STATE ---
-        let currentOrder = [];
+            // DRINKS
+            { id: 4, category: 'drinks', name: 'Drink 1 (Lemonade)', price: 1.00, cost: 0.00, img: 'lemonade.jpg' },
+            { id: 5, category: 'drinks', name: 'Drink 2 (Fruit Fizz)', price: 1.20, cost: 0.00, img: 'fizz.jpg' },
+            { id: 6, category: 'drinks', name: 'Drink 3 (Special)', price: 1.50, cost: 0.00, img: 'special-drink.jpg' },
 
-        // --- 3. THE CALCULATOR FUNCTIONS ---
+            // EXTRAS
+            { id: 7, category: 'extras', name: 'Guess Teddy Name', price: 0.50, cost: 0.00, img: 'teddy.jpg' }
+        ];
 
-        // Adds a quantity of an item from the main list
-        function adjustItemQty(itemName, change) {
-            // Find if this item is already in the order
-            let existingItemIndex = currentOrder.findIndex(item => item.name === itemName);
+        let cart = [];
+        let salesHistory = [];
 
-            if (existingItemIndex !== -1) {
-                // Item exists, update quantity
-                currentOrder[existingItemIndex].qty += change;
-                // Don't let quantity go below zero
-                if (currentOrder[existingItemIndex].qty < 0) {
-                    currentOrder[existingItemIndex].qty = 0;
-                }
-            } else if (change > 0) {
-                // Item doesn't exist AND we are adding (not subtracting), add it
-                currentOrder.push({ name: itemName, price: prices[itemName], qty: change });
-            }
-
-            renderOrder(); // Update the screen
+        function renderMenu() {
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.onclick = () => addToCart(p.id);
+                card.innerHTML = `
+                    <img class="item-image" src="${p.img}" onerror="this.src='https://via.placeholder.com/120x80/eee/999?text=${encodeURIComponent(p.name)}'">
+                    <div class="item-details">
+                        <div class="item-name">${p.name}</div>
+                        <div class="item-price">£${p.price.toFixed(2)}</div>
+                    </div>
+                `;
+                document.getElementById(`grid-${p.category}`).appendChild(card);
+            });
         }
 
-        // Quick add a specific item (like a 'Deal') with a hardcoded price
-        function quickAddItem(itemName, specialPrice) {
-            // Find if this item is already in the order (for deals, we just keep adding new entries for clarity, or update the existing deal)
-            let existingItemIndex = currentOrder.findIndex(item => item.name === itemName);
-             if (existingItemIndex !== -1) {
-                // For a deal button, we usually want to just increment the qty of *that* specific deal line.
-                currentOrder[existingItemIndex].qty += 1;
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const cartItem = cart.find(item => item.id === productId);
+            if (cartItem) {
+                cartItem.qty++;
             } else {
-                 currentOrder.push({ name: itemName, price: specialPrice, qty: 1, isDeal: true });
+                cart.push({ id: product.id, name: product.name, price: product.price, cost: product.cost, qty: 1 });
             }
-            renderOrder();
+            updateCartDisplay();
         }
 
-        // This function recalculates the total and draws the current list
-        function renderOrder() {
-            const orderListDiv = document.getElementById('order-list');
-            const totalDisplay = document.getElementById('total-price');
-            orderListDiv.innerHTML = ''; // Clear previous display
-            let runningTotal = 0;
+        function addDeal(dealName, dealPrice) {
+            const dealId = 999;
+            const cartItem = cart.find(item => item.id === dealId);
+            if (cartItem) {
+                cartItem.qty++;
+            } else {
+                cart.push({ id: dealId, name: dealName, price: dealPrice, cost: 0.00, qty: 1 });
+            }
+            updateCartDisplay();
+        }
 
-            currentOrder.forEach((item, index) => {
-                if (item.qty > 0) {
-                    const itemTotal = item.price * item.qty;
-                    runningTotal += itemTotal;
+        function adjustQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            }
+            updateCartDisplay();
+        }
 
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'item-row';
-                    rowDiv.innerHTML = `
-                        <div class="item-info">
-                            <span>${item.name} (${item.qty})</span>
-                        </div>
-                        <div class="price">
-                            £${itemTotal.toFixed(2)}
-                        </div>
-                    `;
-                    orderListDiv.appendChild(rowDiv);
+        function clearCart() {
+            cart = [];
+            document.getElementById('cash-input').value = '';
+            updateCartDisplay();
+        }
+
+        function calculateTotal() {
+            return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        }
+
+        function updateCartDisplay() {
+            const list = document.getElementById('cart-list');
+            const totalDisplay = document.getElementById('total-display');
+            list.innerHTML = '';
+
+            if (cart.length === 0) {
+                list.innerHTML = '<p style="color: #999; text-align: center; margin-top: 30px;">Tap items to start order</p>';
+                totalDisplay.innerText = '£0.00';
+                calculateChange();
+                return;
+            }
+
+            cart.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'cart-row';
+                row.innerHTML = `
+                    <div>
+                        <div style="font-weight:600; font-size:0.85rem;">${item.name}</div>
+                        <div style="font-size:0.75rem; color:#777;">£${item.price.toFixed(2)} each</div>
+                    </div>
+                    <div class="cart-controls">
+                        <button class="qty-btn" onclick="adjustQty(${item.id}, -1)">-</button>
+                        <span style="font-weight:bold; font-size:0.9rem;">${item.qty}</span>
+                        <button class="qty-btn" onclick="adjustQty(${item.id}, 1)">+</button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+
+            totalDisplay.innerText = `£${calculateTotal().toFixed(2)}`;
+            calculateChange();
+        }
+
+        function setCashPaid(amount) {
+            if (amount === 'exact') {
+                document.getElementById('cash-input').value = calculateTotal().toFixed(2);
+            } else {
+                document.getElementById('cash-input').value = amount.toFixed(2);
+            }
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const total = calculateTotal();
+            const cashPaid = parseFloat(document.getElementById('cash-input').value) || 0;
+            const changeDisplay = document.getElementById('change-display');
+
+            if (cashPaid >= total && total > 0) {
+                const change = cashPaid - total;
+                changeDisplay.innerText = `£${change.toFixed(2)}`;
+                changeDisplay.style.color = '#1fb981';
+            } else {
+                changeDisplay.innerText = '£0.00';
+                changeDisplay.style.color = '#eb5e8d';
+            }
+        }
+
+        function submitSale() {
+            if (cart.length === 0) {
+                alert("Please add items to the order first.");
+                return;
+            }
+
+            const total = calculateTotal();
+            const cashPaid = parseFloat(document.getElementById('cash-input').value) || 0;
+
+            if (cashPaid < total) {
+                if (!confirm("Cash paid is less than total. Complete order anyway?")) {
+                    return;
                 }
+            }
+
+            salesHistory.push({
+                timestamp: new Date().toLocaleTimeString(),
+                items: JSON.parse(JSON.stringify(cart)),
+                total: total
             });
 
-            totalDisplay.innerText = `£${runningTotal.toFixed(2)}`;
-            
-            // --- 4. Update the Quantity Counters on the Main Menu ---
-            updateMenuQuantities();
+            alert("Order Submitted! Clear for next customer.");
+            clearCart();
         }
-        
-        function updateMenuQuantities() {
-            // We iterate through all known menu items and ensure their display counter matches currentOrder
-            const menuItems = [
-                {name: 'Simple Treat (e.g., cookie)', id: 'qty-Cookie'},
-                {name: 'Standard Bake (e.g., brownie)', id: 'qty-Brownie'},
-                {name: 'Premium Bake (e.g., decorated cake)', id: 'qty-PremCake'},
-                {name: 'Drink 1 (e.g., lemonade)', id: 'qty-Lemonade'},
-                {name: 'Drink 2 (e.g., fruit fizz)', id: 'qty-FruitFizz'},
-                {name: 'Special Drink', id: 'qty-SpecialDrink'},
-                {name: 'Guess the Teddy Name (1 Entry)', id: 'qty-TeddyEntry'}
-            ];
+
+        function openReport() {
+            const modal = document.getElementById('report-modal');
+            const details = document.getElementById('report-details');
             
-            menuItems.forEach(menuItem => {
-                const qtyElement = document.getElementById(menuItem.id);
-                const orderItem = currentOrder.find(item => item.name === menuItem.name);
-                qtyElement.innerText = orderItem ? orderItem.qty : 0;
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let itemCounts = {};
+
+            salesHistory.forEach(order => {
+                totalRevenue += order.total;
+                order.items.forEach(item => {
+                    if (!itemCounts[item.name]) {
+                        itemCounts[item.name] = { qty: 0, revenue: 0 };
+                    }
+                    itemCounts[item.name].qty += item.qty;
+                    itemCounts[item.name].revenue += (item.price * item.qty);
+                    totalCost += (item.cost * item.qty);
+                });
             });
+
+            const totalProfit = totalRevenue - totalCost;
+
+            let itemsBreakdownHtml = '<ul style="padding-left:20px;">';
+            for (const [name, data] of Object.entries(itemCounts)) {
+                itemsBreakdownHtml += `<li><strong>${name}:</strong> ${data.qty} sold (£${data.revenue.toFixed(2)})</li>`;
+            }
+            itemsBreakdownHtml += '</ul>';
+
+            details.innerHTML = `
+                <p><strong>Total Orders Completed:</strong> ${salesHistory.length}</p>
+                <p><strong>Total Revenue Raised:</strong> <span style="color:#1fb981; font-size:1.2rem; font-weight:bold;">£${totalRevenue.toFixed(2)}</span></p>
+                <p><strong>Est. Overall Profit:</strong> <span style="color:#1fb981; font-weight:bold;">£${totalProfit.toFixed(2)}</span></p>
+                <hr>
+                <h4 style="margin-bottom:5px;">Items Sold Breakdown:</h4>
+                ${salesHistory.length === 0 ? '<p style="color:#999;">No sales recorded yet.</p>' : itemsBreakdownHtml}
+            `;
+
+            modal.style.display = 'flex';
         }
 
-        // Resets the entire till
-        function clearTill() {
-            currentOrder = [];
-            renderOrder();
+        function closeReport() {
+            document.getElementById('report-modal').style.display = 'none';
         }
 
-        // Final safety check to render quantities on page load (though starting at zero is default)
-        updateMenuQuantities();
+        function downloadReport() {
+            let reportText = `--- DRUMAHOE JUNIOR FORUM END OF SHIFT REPORT ---\n`;
+            reportText += `Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            let totalRevenue = 0;
+            let itemCounts = {};
 
+            salesHistory.forEach(order => {
+                totalRevenue += order.total;
+                order.items.forEach(item => {
+                    if (!itemCounts[item.name]) itemCounts[item.name] = 0;
+                    itemCounts[item.name] += item.qty;
+                });
+            });
+
+            reportText += `TOTAL SALES REVENUE: £${totalRevenue.toFixed(2)}\n`;
+            reportText += `TOTAL TRANSACTIONS: ${salesHistory.length}\n\n`;
+            reportText += `ITEMS SOLD:\n`;
+
+            for (const [name, qty] of Object.entries(itemCounts)) {
+                reportText += `- ${name}: ${qty}\n`;
+            }
+
+            const blob = new Blob([reportText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'bakehouse-sales-report.txt';
+            a.click();
+        }
+
+        renderMenu();
     </script>
 </body>
 </html>
