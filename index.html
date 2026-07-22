@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drumahoe Junior Forum - Bakehouse Till</title>
+    <!-- Simple, clean font and basic mobile-friendly styling -->
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f7f3e8; color: #333; display: flex; flex-direction: column; align-items: center; }
+        .till-container { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 600px; text-align: center; }
+        
+        /* The header styled to match the theme (see image_0.png) */
+        h1 { color: #eb5e8d; margin-top: 0; } /* BAKEHOUSE PINK */
+        h2 { color: #1fb981; margin-bottom: 25px; } /* JUICE BAR GREEN */
+        h3.section-title { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; text-align: left; }
+        
+        .item-list { text-align: left; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; border-bottom: 1px solid #eee; }
+        
+        .item-info { flex: 1; }
+        .price { color: #666; margin-left: 10px; font-weight: bold;}
+        
+        .item-actions { display: flex; align-items: center; gap: 10px; }
+        
+        button.qty-btn { background-color: #eee; border: 1px solid #ccc; border-radius: 5px; color: #333; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;}
+        button.qty-btn:hover { background-color: #ddd; }
+        span.item-qty { font-size: 1.2rem; font-weight: bold; width: 30px; text-align: center; }
+
+        .total-section { margin-top: 30px; padding: 20px; border-top: 2px solid #333; font-size: 1.8rem; background-color: #eee; border-radius: 10px;}
+        .total-label { color: #1fb981; font-weight: bold;}
+        
+        #clear-btn { background-color: #ff4d4d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+        #clear-btn:hover { background-color: #d13030; }
+
+        /* Themed buttons */
+        .color-block-btn { border: none; color: white; font-weight: bold; cursor: pointer; text-align: center; border-radius: 10px; flex: 1; margin: 5px; padding: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 80px;}
+        .bake-btn { background-color: #ed6c7a; } /* Homemade Cakes Color Block */
+        .juice-btn { background-color: #ffea70; color: #333 !important; } /* Refreshing Fruit Fizzes Color Block */
+        .teddy-btn { background-color: #7d96ff; } /* Guess The Name Color Block */
+        
+        .button-group { display: flex; width: 100%; justify-content: space-between; margin-bottom: 15px;}
+        
+        /* Basic mobile responsiveness */
+        @media (max-width: 600px) {
+            .till-container { padding: 15px; }
+            .button-group { flex-direction: column; }
+            .color-block-btn { margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="till-container">
+        <!-- Logo and Title Area -->
+        <div style="display:flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <img src="https://via.placeholder.com/60" alt="JF Logo" style="border-radius: 50%;">
+            <div>
+                <h1>BAKEHOUSE</h1>
+                <h2>&amp; JUICE BAR</h2>
+            </div>
+        </div>
+
+        <!-- Quick Access Buttons -->
+        <p>Quick Add (e.g., specific deals):</p>
+        <div class="button-group">
+            <button class="color-block-btn bake-btn" onclick="quickAddItem('Meal Deal: Bake + Drink + Teddy', 3.50)">⭐ Meal Deal (B+D+T) - £3.50</button>
+        </div>
+
+        <!-- Order Summary Section (The running total) -->
+        <h3 class="section-title">Current Order:</h3>
+        <div class="item-list" id="order-list">
+            <!-- Items are added here by JavaScript -->
+        </div>
+
+        <div class="total-section">
+            <span class="total-label">ORDER TOTAL:</span> <span id="total-price">£0.00</span>
+        </div>
+        
+        <button id="clear-btn" onclick="clearTill()">CLEAR ORDER</button>
+
+        <!-- The 'Menu' section, where prices are managed -->
+        <h3 class="section-title">Add Items:</h3>
+        
+        <div class="button-group">
+            <div class="color-block-btn bake-btn" style="cursor: default; pointer-events: none; padding: 10px;">
+                Cakes, Traybakes & Treats
+            </div>
+        </div>
+        <div class="item-list">
+            <div class="item-row">
+                <div class="item-info"><span>Simple Treat (e.g., cookie)</span><span class="price">£0.50</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Simple Treat (e.g., cookie)', -1)">-</button>
+                    <span class="item-qty" id="qty-Cookie">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Simple Treat (e.g., cookie)', 1)">+</button>
+                </div>
+            </div>
+            <div class="item-row">
+                <div class="item-info"><span>Standard Bake (e.g., brownie)</span><span class="price">£1.00</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Standard Bake (e.g., brownie)', -1)">-</button>
+                    <span class="item-qty" id="qty-Brownie">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Standard Bake (e.g., brownie)', 1)">+</button>
+                </div>
+            </div>
+            <div class="item-row">
+                <div class="item-info"><span>Premium Bake (e.g., decorated cake)</span><span class="price">£2.00</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Premium Bake (e.g., decorated cake)', -1)">-</button>
+                    <span class="item-qty" id="qty-PremCake">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Premium Bake (e.g., decorated cake)', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <div class="color-block-btn juice-btn" style="cursor: default; pointer-events: none; padding: 10px;">
+                Drinks (3 types)
+            </div>
+        </div>
+        <div class="item-list">
+            <div class="item-row">
+                <div class="item-info"><span>Drink 1 (e.g., lemonade)</span><span class="price">£1.50</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Drink 1 (e.g., lemonade)', -1)">-</button>
+                    <span class="item-qty" id="qty-Lemonade">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Drink 1 (e.g., lemonade)', 1)">+</button>
+                </div>
+            </div>
+             <div class="item-row">
+                <div class="item-info"><span>Drink 2 (e.g., fruit fizz)</span><span class="price">£1.50</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Drink 2 (e.g., fruit fizz)', -1)">-</button>
+                    <span class="item-qty" id="qty-FruitFizz">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Drink 2 (e.g., fruit fizz)', 1)">+</button>
+                </div>
+            </div>
+             <div class="item-row">
+                <div class="item-info"><span>Special Drink</span><span class="price">£2.00</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Special Drink', -1)">-</button>
+                    <span class="item-qty" id="qty-SpecialDrink">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Special Drink', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <div class="color-block-btn teddy-btn" style="cursor: default; pointer-events: none; padding: 10px;">
+                Extras
+            </div>
+        </div>
+        <div class="item-list">
+            <div class="item-row">
+                <div class="item-info"><span>Guess the Teddy Name (1 Entry)</span><span class="price">£0.50</span></div>
+                <div class="item-actions">
+                    <button class="qty-btn" onclick="adjustItemQty('Guess the Teddy Name (1 Entry)', -1)">-</button>
+                    <span class="item-qty" id="qty-TeddyEntry">0</span>
+                    <button class="qty-btn" onclick="adjustItemQty('Guess the Teddy Name (1 Entry)', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simple, legal note on pricing -->
+        <p style="font-size: 0.8rem; color: #999; margin-top: 30px;">All money raised is for the Junior Forum. Check poster [image_0.png] for dates.</p>
+    </div>
+
+    <!-- The JavaScript Calculator Logic -->
+    <script>
+        // --- 1. SET YOUR PRICES HERE ---
+        // (Just change the numbers below when you have confirmed prices)
+        const prices = {
+            'Simple Treat (e.g., cookie)': 0.50,
+            'Standard Bake (e.g., brownie)': 1.00,
+            'Premium Bake (e.g., decorated cake)': 2.00,
+            'Drink 1 (e.g., lemonade)': 1.50,
+            'Drink 2 (e.g., fruit fizz)': 1.50,
+            'Special Drink': 2.00,
+            'Guess the Teddy Name (1 Entry)': 0.50
+        };
+
+        // --- 2. THE ORDER STATE ---
+        let currentOrder = [];
+
+        // --- 3. THE CALCULATOR FUNCTIONS ---
+
+        // Adds a quantity of an item from the main list
+        function adjustItemQty(itemName, change) {
+            // Find if this item is already in the order
+            let existingItemIndex = currentOrder.findIndex(item => item.name === itemName);
+
+            if (existingItemIndex !== -1) {
+                // Item exists, update quantity
+                currentOrder[existingItemIndex].qty += change;
+                // Don't let quantity go below zero
+                if (currentOrder[existingItemIndex].qty < 0) {
+                    currentOrder[existingItemIndex].qty = 0;
+                }
+            } else if (change > 0) {
+                // Item doesn't exist AND we are adding (not subtracting), add it
+                currentOrder.push({ name: itemName, price: prices[itemName], qty: change });
+            }
+
+            renderOrder(); // Update the screen
+        }
+
+        // Quick add a specific item (like a 'Deal') with a hardcoded price
+        function quickAddItem(itemName, specialPrice) {
+            // Find if this item is already in the order (for deals, we just keep adding new entries for clarity, or update the existing deal)
+            let existingItemIndex = currentOrder.findIndex(item => item.name === itemName);
+             if (existingItemIndex !== -1) {
+                // For a deal button, we usually want to just increment the qty of *that* specific deal line.
+                currentOrder[existingItemIndex].qty += 1;
+            } else {
+                 currentOrder.push({ name: itemName, price: specialPrice, qty: 1, isDeal: true });
+            }
+            renderOrder();
+        }
+
+        // This function recalculates the total and draws the current list
+        function renderOrder() {
+            const orderListDiv = document.getElementById('order-list');
+            const totalDisplay = document.getElementById('total-price');
+            orderListDiv.innerHTML = ''; // Clear previous display
+            let runningTotal = 0;
+
+            currentOrder.forEach((item, index) => {
+                if (item.qty > 0) {
+                    const itemTotal = item.price * item.qty;
+                    runningTotal += itemTotal;
+
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'item-row';
+                    rowDiv.innerHTML = `
+                        <div class="item-info">
+                            <span>${item.name} (${item.qty})</span>
+                        </div>
+                        <div class="price">
+                            £${itemTotal.toFixed(2)}
+                        </div>
+                    `;
+                    orderListDiv.appendChild(rowDiv);
+                }
+            });
+
+            totalDisplay.innerText = `£${runningTotal.toFixed(2)}`;
+            
+            // --- 4. Update the Quantity Counters on the Main Menu ---
+            updateMenuQuantities();
+        }
+        
+        function updateMenuQuantities() {
+            // We iterate through all known menu items and ensure their display counter matches currentOrder
+            const menuItems = [
+                {name: 'Simple Treat (e.g., cookie)', id: 'qty-Cookie'},
+                {name: 'Standard Bake (e.g., brownie)', id: 'qty-Brownie'},
+                {name: 'Premium Bake (e.g., decorated cake)', id: 'qty-PremCake'},
+                {name: 'Drink 1 (e.g., lemonade)', id: 'qty-Lemonade'},
+                {name: 'Drink 2 (e.g., fruit fizz)', id: 'qty-FruitFizz'},
+                {name: 'Special Drink', id: 'qty-SpecialDrink'},
+                {name: 'Guess the Teddy Name (1 Entry)', id: 'qty-TeddyEntry'}
+            ];
+            
+            menuItems.forEach(menuItem => {
+                const qtyElement = document.getElementById(menuItem.id);
+                const orderItem = currentOrder.find(item => item.name === menuItem.name);
+                qtyElement.innerText = orderItem ? orderItem.qty : 0;
+            });
+        }
+
+        // Resets the entire till
+        function clearTill() {
+            currentOrder = [];
+            renderOrder();
+        }
+
+        // Final safety check to render quantities on page load (though starting at zero is default)
+        updateMenuQuantities();
+
+    </script>
+</body>
+</html>
