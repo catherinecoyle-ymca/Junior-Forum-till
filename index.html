@@ -97,7 +97,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         }
 
-        /* RIGHT SIDE: CART & CASH REGISTER */
         .cart-section {
             background: #fff;
             border-radius: 12px;
@@ -134,7 +133,6 @@
         }
         .total-amount { font-size: 1.6rem; font-weight: bold; color: #1fb981; }
 
-        /* PAYMENT & CHANGE SECTION - simplified language */
         .payment-box {
             background: #f8f9fa;
             border: 1px solid #e2e8f0;
@@ -167,9 +165,26 @@
             align-items: center;
             font-weight: bold;
             font-size: 0.95rem;
-            padding-top: 4px;
+            padding-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 6px;
         }
-        .change-amount { color: #eb5e8d; font-size: 1.2rem; }
+        
+        /* EYE-CATCHING CHANGE DISPLAY */
+        .change-amount { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .change-owed {
+            color: #e53e3e !important; /* Bright Standout Red */
+            transform: scale(1.05);
+        }
+
+        .change-none {
+            color: #a0aec0 !important; /* Soft Gray */
+        }
 
         .action-buttons { display: flex; gap: 8px; }
         .btn-complete {
@@ -263,7 +278,6 @@
                 <span class="total-amount" id="total-display">£0.00</span>
             </div>
 
-            <!-- Simplified Payment & Change Section -->
             <div class="payment-box">
                 <div style="font-size: 0.75rem; color: #666; margin-bottom: 5px; font-weight: bold;">MONEY GIVEN BY CUSTOMER</div>
                 <div class="quick-cash-grid">
@@ -278,7 +292,7 @@
                 </div>
                 <div class="change-row">
                     <span>CHANGE TO GIVE BACK:</span>
-                    <span class="change-amount" id="change-display">£0.00</span>
+                    <span class="change-amount change-none" id="change-display">£0.00</span>
                 </div>
             </div>
 
@@ -302,7 +316,6 @@
     </div>
 
     <script>
-        // CONFIGURATION: Set up item names, categories, placeholder prices, and image filenames
         const products = [
             // BAKES
             { id: 1, category: 'bakes', name: 'Cheap Treat', price: 0.50, cost: 0.00, img: 'cookie.jpg' },
@@ -420,18 +433,19 @@
             calculateChange();
         }
 
+        // HIGHLIGHT CHANGE IN RED LOGIC
         function calculateChange() {
             const total = calculateTotal();
             const cashPaid = parseFloat(document.getElementById('cash-input').value) || 0;
             const changeDisplay = document.getElementById('change-display');
 
-            if (cashPaid >= total && total > 0) {
+            if (cashPaid > total && total > 0) {
                 const change = cashPaid - total;
                 changeDisplay.innerText = `£${change.toFixed(2)}`;
-                changeDisplay.style.color = '#1fb981';
+                changeDisplay.className = 'change-amount change-owed'; // Turns Red
             } else {
                 changeDisplay.innerText = '£0.00';
-                changeDisplay.style.color = '#eb5e8d';
+                changeDisplay.className = 'change-amount change-none'; // Turns Gray
             }
         }
 
