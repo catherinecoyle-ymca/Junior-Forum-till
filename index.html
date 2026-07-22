@@ -134,7 +134,7 @@
         }
         .total-amount { font-size: 1.6rem; font-weight: bold; color: #1fb981; }
 
-        /* CASH & CHANGE SECTION */
+        /* PAYMENT & CHANGE SECTION - simplified language */
         .payment-box {
             background: #f8f9fa;
             border: 1px solid #e2e8f0;
@@ -194,7 +194,6 @@
             flex: 1;
         }
 
-        /* MODAL FOR REPORT */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -214,7 +213,6 @@
             overflow-y: auto;
         }
 
-        /* Responsive view for phones/portrait */
         @media (max-width: 768px) {
             body { overflow: auto; }
             .pos-container { grid-template-columns: 1fr; height: auto; }
@@ -229,14 +227,13 @@
         <div class="menu-section">
             <div class="header-bar">
                 <div class="header-info">
-                    <!-- Logo file linked to logo.png -->
                     <img src="logo.png" onerror="this.src='https://via.placeholder.com/45?text=JF'" alt="Junior Forum Logo">
                     <div>
                         <h1>Bakehouse</h1>
                         <h2>&amp; Juice Bar</h2>
                     </div>
                 </div>
-                <button class="btn-report-trigger" onclick="openReport()">📊 End Shift Summary</button>
+                <button class="btn-report-trigger" onclick="openReport()">📊 Total Sales</button>
             </div>
 
             <!-- Quick Meal Deal -->
@@ -254,7 +251,7 @@
             <div class="item-grid" id="grid-extras"></div>
         </div>
 
-        <!-- RIGHT: Till Cart & Payment -->
+        <!-- RIGHT: Cart & Cash Register -->
         <div class="cart-section">
             <div class="cart-title">Current Order</div>
             <div class="cart-items" id="cart-list">
@@ -266,9 +263,9 @@
                 <span class="total-amount" id="total-display">£0.00</span>
             </div>
 
-            <!-- Payment & Change Calculator -->
+            <!-- Simplified Payment & Change Section -->
             <div class="payment-box">
-                <div style="font-size: 0.75rem; color: #666; margin-bottom: 5px;">CASH TENDERED</div>
+                <div style="font-size: 0.75rem; color: #666; margin-bottom: 5px; font-weight: bold;">MONEY GIVEN BY CUSTOMER</div>
                 <div class="quick-cash-grid">
                     <button class="btn-cash" onclick="setCashPaid('exact')">Exact</button>
                     <button class="btn-cash" onclick="setCashPaid(5)">£5</button>
@@ -277,17 +274,17 @@
                 </div>
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <span style="font-size: 0.85rem; font-weight: bold;">£</span>
-                    <input type="number" id="cash-input" step="0.01" placeholder="0.00" style="width: 100%; padding: 6px; border-radius: 5px; border: 1px solid #ccc;" oninput="calculateChange()">
+                    <input type="number" id="cash-input" step="0.01" placeholder="Amount given" style="width: 100%; padding: 6px; border-radius: 5px; border: 1px solid #ccc;" oninput="calculateChange()">
                 </div>
                 <div class="change-row">
-                    <span>CHANGE DUE:</span>
+                    <span>CHANGE TO GIVE BACK:</span>
                     <span class="change-amount" id="change-display">£0.00</span>
                 </div>
             </div>
 
             <div class="action-buttons">
                 <button class="btn-clear" onclick="clearCart()">Cancel</button>
-                <button class="btn-complete" onclick="submitSale()">Pay &amp; Complete</button>
+                <button class="btn-complete" onclick="submitSale()">Done / Paid</button>
             </div>
         </div>
     </div>
@@ -295,17 +292,17 @@
     <!-- REPORT MODAL -->
     <div class="modal-overlay" id="report-modal">
         <div class="modal-content">
-            <h2 style="margin-top:0; color:#eb5e8d;">End of Shift Sales Report</h2>
+            <h2 style="margin-top:0; color:#eb5e8d;">End of Shift Sales Summary</h2>
             <div id="report-details"></div>
             <br>
-            <button class="btn-cash" style="width:100%; padding:10px; background:#1fb981; color:white;" onclick="downloadReport()">Download Text Summary</button>
+            <button class="btn-cash" style="width:100%; padding:10px; background:#1fb981; color:white;" onclick="downloadReport()">Download Sales Report</button>
             <br><br>
             <button class="btn-cash" style="width:100%; padding:8px;" onclick="closeReport()">Close</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURATION: Customize items, prices, estimated costs, and image filenames here
+        // CONFIGURATION: Set up item names, categories, placeholder prices, and image filenames
         const products = [
             // BAKES
             { id: 1, category: 'bakes', name: 'Cheap Treat', price: 0.50, cost: 0.00, img: 'cookie.jpg' },
@@ -440,7 +437,7 @@
 
         function submitSale() {
             if (cart.length === 0) {
-                alert("Please add items to the order first.");
+                alert("Please tap some items first!");
                 return;
             }
 
@@ -448,7 +445,7 @@
             const cashPaid = parseFloat(document.getElementById('cash-input').value) || 0;
 
             if (cashPaid < total) {
-                if (!confirm("Cash paid is less than total. Complete order anyway?")) {
+                if (!confirm("Money given is less than total due. Complete order anyway?")) {
                     return;
                 }
             }
@@ -459,7 +456,7 @@
                 total: total
             });
 
-            alert("Order Submitted! Clear for next customer.");
+            alert("Order Complete! Ready for next customer.");
             clearCart();
         }
 
@@ -493,10 +490,10 @@
 
             details.innerHTML = `
                 <p><strong>Total Orders Completed:</strong> ${salesHistory.length}</p>
-                <p><strong>Total Revenue Raised:</strong> <span style="color:#1fb981; font-size:1.2rem; font-weight:bold;">£${totalRevenue.toFixed(2)}</span></p>
-                <p><strong>Est. Overall Profit:</strong> <span style="color:#1fb981; font-weight:bold;">£${totalProfit.toFixed(2)}</span></p>
+                <p><strong>Total Money Raised:</strong> <span style="color:#1fb981; font-size:1.2rem; font-weight:bold;">£${totalRevenue.toFixed(2)}</span></p>
+                <p><strong>Estimated Profit:</strong> <span style="color:#1fb981; font-weight:bold;">£${totalProfit.toFixed(2)}</span></p>
                 <hr>
-                <h4 style="margin-bottom:5px;">Items Sold Breakdown:</h4>
+                <h4 style="margin-bottom:5px;">Items Sold:</h4>
                 ${salesHistory.length === 0 ? '<p style="color:#999;">No sales recorded yet.</p>' : itemsBreakdownHtml}
             `;
 
