@@ -85,17 +85,29 @@
         .item-name { font-size: 0.8rem; font-weight: 600; color: #333; margin-bottom: 2px; }
         .item-price { font-size: 0.85rem; font-weight: bold; color: #1fb981; }
 
+        /* DEALS CONTAINER - 2 BUTTONS */
+        .deals-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
         .deal-card {
             background: linear-gradient(135deg, #ffea70 0%, #ffd000 100%);
             padding: 10px;
             border-radius: 10px;
             text-align: center;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            grid-column: 1 / -1;
             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
+        .deal-card:active { transform: scale(0.97); }
 
         .cart-section {
             background: #fff;
@@ -231,6 +243,7 @@
             body { overflow: auto; }
             .pos-container { grid-template-columns: 1fr; height: auto; }
             .cart-section { height: 450px; }
+            .deals-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -250,9 +263,16 @@
                 <button class="btn-report-trigger" onclick="openReport()">📊 Total Sales</button>
             </div>
 
-            <!-- Meal Deal Option -->
-            <div class="deal-card" onclick="addDeal('Bun + Drink Deal (FREE Teddy Guess)', 2.00)">
-                ⭐ Special Deal: Buy a Drink &amp; Bun, Get a FREE Teddy Guess! (£2.00)
+            <!-- TWO DEAL BUTTONS -->
+            <div class="deals-container">
+                <div class="deal-card" onclick="addDeal('Deal: Small Bun + Drink + Free Teddy', 2.00)">
+                    <span>⭐ SMALL DEAL (£2.00)</span>
+                    <span style="font-size:0.75rem; font-weight:normal;">Drink + Small Bun + Free Teddy Guess</span>
+                </div>
+                <div class="deal-card" onclick="addDeal('Deal: Big Bun + Drink + Free Teddy', 2.50)">
+                    <span>⭐ BIG DEAL (£2.50)</span>
+                    <span style="font-size:0.75rem; font-weight:normal;">Drink + Big Bun + Free Teddy Guess</span>
+                </div>
             </div>
 
             <div class="category-title">Bakehouse Treats</div>
@@ -315,7 +335,6 @@
     </div>
 
     <script>
-        // Note: You can replace any 'img' value below with a full URL address (e.g., "https://example.com/image.jpg")
         const products = [
             // BAKES
             { id: 1, category: 'bakes', name: 'Small Bake', price: 0.50, cost: 0.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnPwPYG-2_FdYFKkfWOQhicErogOd5qc-pniA4uo3ci6J0ToFd2idYVGgt&s=10' },
@@ -332,6 +351,7 @@
 
         let cart = [];
         let salesHistory = [];
+        let dealCounter = 900;
 
         function renderMenu() {
             products.forEach(p => {
@@ -361,12 +381,12 @@
         }
 
         function addDeal(dealName, dealPrice) {
-            const dealId = 999;
-            const cartItem = cart.find(item => item.id === dealId);
+            const cartItem = cart.find(item => item.name === dealName);
             if (cartItem) {
                 cartItem.qty++;
             } else {
-                cart.push({ id: dealId, name: dealName, price: dealPrice, cost: 0.00, qty: 1 });
+                dealCounter++;
+                cart.push({ id: dealCounter, name: dealName, price: dealPrice, cost: 0.00, qty: 1 });
             }
             updateCartDisplay();
         }
