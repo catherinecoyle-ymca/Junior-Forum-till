@@ -170,7 +170,6 @@
             margin-top: 6px;
         }
         
-        /* EYE-CATCHING CHANGE DISPLAY */
         .change-amount { 
             font-size: 1.5rem; 
             font-weight: 800; 
@@ -178,12 +177,12 @@
         }
         
         .change-owed {
-            color: #e53e3e !important; /* Bright Standout Red */
+            color: #e53e3e !important;
             transform: scale(1.05);
         }
 
         .change-none {
-            color: #a0aec0 !important; /* Soft Gray */
+            color: #a0aec0 !important;
         }
 
         .action-buttons { display: flex; gap: 8px; }
@@ -251,18 +250,18 @@
                 <button class="btn-report-trigger" onclick="openReport()">📊 Total Sales</button>
             </div>
 
-            <!-- Quick Meal Deal -->
-            <div class="deal-card" onclick="addDeal('Meal Deal (Bake + Drink + Teddy)', 3.50)">
-                ⭐ Meal Deal: Bake + Drink + Teddy Entry (£3.50)
+            <!-- Meal Deal Option -->
+            <div class="deal-card" onclick="addDeal('Bun + Drink Deal (FREE Teddy Guess)', 2.00)">
+                ⭐ Special Deal: Buy a Drink &amp; Bun, Get a FREE Teddy Guess! (£2.00)
             </div>
 
-            <div class="category-title">Bakes &amp; Treats</div>
+            <div class="category-title">Bakehouse Treats</div>
             <div class="item-grid" id="grid-bakes"></div>
 
             <div class="category-title juice">Juice Bar Drinks</div>
             <div class="item-grid" id="grid-drinks"></div>
 
-            <div class="category-title extra">Extras</div>
+            <div class="category-title extra">Competitions &amp; Extras</div>
             <div class="item-grid" id="grid-extras"></div>
         </div>
 
@@ -282,9 +281,9 @@
                 <div style="font-size: 0.75rem; color: #666; margin-bottom: 5px; font-weight: bold;">MONEY GIVEN BY CUSTOMER</div>
                 <div class="quick-cash-grid">
                     <button class="btn-cash" onclick="setCashPaid('exact')">Exact</button>
+                    <button class="btn-cash" onclick="setCashPaid(2)">£2</button>
                     <button class="btn-cash" onclick="setCashPaid(5)">£5</button>
                     <button class="btn-cash" onclick="setCashPaid(10)">£10</button>
-                    <button class="btn-cash" onclick="setCashPaid(20)">£20</button>
                 </div>
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <span style="font-size: 0.85rem; font-weight: bold;">£</span>
@@ -316,19 +315,19 @@
     </div>
 
     <script>
+        // Note: You can replace any 'img' value below with a full URL address (e.g., "https://example.com/image.jpg")
         const products = [
             // BAKES
-            { id: 1, category: 'bakes', name: 'Cheap Treat', price: 0.50, cost: 0.00, img: 'cookie.jpg' },
-            { id: 2, category: 'bakes', name: 'Medium Bake', price: 1.00, cost: 0.00, img: 'brownie.jpg' },
-            { id: 3, category: 'bakes', name: 'High Bake', price: 1.50, cost: 0.00, img: 'cake.jpg' },
+            { id: 1, category: 'bakes', name: 'Small Bake', price: 0.50, cost: 0.00, img: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200' },
+            { id: 2, category: 'bakes', name: 'Big Bake', price: 1.00, cost: 0.00, img: 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=200' },
 
             // DRINKS
-            { id: 4, category: 'drinks', name: 'Drink 1 (Lemonade)', price: 1.00, cost: 0.00, img: 'lemonade.jpg' },
-            { id: 5, category: 'drinks', name: 'Drink 2 (Fruit Fizz)', price: 1.20, cost: 0.00, img: 'fizz.jpg' },
-            { id: 6, category: 'drinks', name: 'Drink 3 (Special)', price: 1.50, cost: 0.00, img: 'special-drink.jpg' },
+            { id: 3, category: 'drinks', name: 'Blue Lagoon', price: 1.50, cost: 0.00, img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=200' },
+            { id: 4, category: 'drinks', name: 'Tropical Sunset', price: 1.50, cost: 0.00, img: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=200' },
+            { id: 5, category: 'drinks', name: 'Pink Lemonade', price: 1.50, cost: 0.00, img: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=200' },
 
             // EXTRAS
-            { id: 7, category: 'extras', name: 'Guess Teddy Name', price: 0.50, cost: 0.00, img: 'teddy.jpg' }
+            { id: 6, category: 'extras', name: 'Guess the Teddy', price: 0.50, cost: 0.00, img: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=200' }
         ];
 
         let cart = [];
@@ -433,7 +432,6 @@
             calculateChange();
         }
 
-        // HIGHLIGHT CHANGE IN RED LOGIC
         function calculateChange() {
             const total = calculateTotal();
             const cashPaid = parseFloat(document.getElementById('cash-input').value) || 0;
@@ -442,10 +440,10 @@
             if (cashPaid > total && total > 0) {
                 const change = cashPaid - total;
                 changeDisplay.innerText = `£${change.toFixed(2)}`;
-                changeDisplay.className = 'change-amount change-owed'; // Turns Red
+                changeDisplay.className = 'change-amount change-owed';
             } else {
                 changeDisplay.innerText = '£0.00';
-                changeDisplay.className = 'change-amount change-none'; // Turns Gray
+                changeDisplay.className = 'change-amount change-none';
             }
         }
 
