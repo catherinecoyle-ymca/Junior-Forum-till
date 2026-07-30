@@ -132,6 +132,24 @@
 
         .cart-controls { display: flex; align-items: center; gap: 6px; }
         .qty-btn { background: #eef0f2; border: none; width: 26px; height: 26px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        
+        /* DELETE BUTTON STYLING */
+        .delete-btn {
+            background: #ffe5e5;
+            color: #e53e3e;
+            border: 1px solid #fca5a5;
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-left: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .delete-btn:active { background: #e53e3e; color: white; }
 
         .total-box {
             background: #222;
@@ -400,6 +418,11 @@
             updateCartDisplay();
         }
 
+        function deleteItem(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCartDisplay();
+        }
+
         function clearCart() {
             cart = [];
             document.getElementById('cash-input').value = '';
@@ -434,6 +457,7 @@
                         <button class="qty-btn" onclick="adjustQty(${item.id}, -1)">-</button>
                         <span style="font-weight:bold; font-size:0.9rem;">${item.qty}</span>
                         <button class="qty-btn" onclick="adjustQty(${item.id}, 1)">+</button>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})" title="Remove item">✕</button>
                     </div>
                 `;
                 list.appendChild(row);
